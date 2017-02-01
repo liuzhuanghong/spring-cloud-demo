@@ -21,6 +21,8 @@ public class StudentController {
 	 * @return 学生类信息对象
 	 */
 	@GetMapping("/student/{id}")
+	// @GetMapping("/{id}")是spring 4.3的新注解等价于：
+	// @RequestMapping(value = "/id", method = RequestMethod.GET)
 	public Student findById(@PathVariable Long id) {
 		// replacing studentRepository.getOne(id) method call with
 		// studentRepository.findOne(id) problem was gone.
