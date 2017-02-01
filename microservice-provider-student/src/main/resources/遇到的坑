@@ -1,6 +1,12 @@
 
 
-异常：
+［异常］：
 2017-02-01 15:35:56.398  WARN 689 --- [nio-9000-exec-2] .w.s.m.s.DefaultHandlerExceptionResolver : Failed to write HTTP message: org.springframework.http.converter.HttpMessageNotWritableException: Could not write content: No serializer found for class org.hibernate.proxy.pojo.javassist.JavassistLazyInitializer and no properties discovered to create BeanSerializer (to avoid exception, disable SerializationFeature.FAIL_ON_EMPTY_BEANS) (through reference chain: com.steven.microservice.provider.entity.Student_$$_jvst233_0["handler"]); nested exception is com.fasterxml.jackson.databind.JsonMappingException: No serializer found for class org.hibernate.proxy.pojo.javassist.JavassistLazyInitializer and no properties discovered to create BeanSerializer (to avoid exception, disable SerializationFeature.FAIL_ON_EMPTY_BEANS) (through reference chain: com.steven.microservice.provider.entity.Student_$$_jvst233_0["handler"])
-解决方案：
+［解决方案］：
 使用studentRepository.findOne(id) 代替studentRepository.getOne(id)
+
+
+［异常］：
+错误: 找不到或无法加载主类 com.steven.microservice.provider.MicroserviceProviderStudentApplication
+［解决方案］：
+重新Update Project

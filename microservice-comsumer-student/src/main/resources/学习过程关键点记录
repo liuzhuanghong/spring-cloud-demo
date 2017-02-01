@@ -1,0 +1,139 @@
+消费服务的过程：
+1、声明依赖
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-eureka</artifactId>
+		</dependency>
+		<!-- 整合ribbon -->
+		<!-- Ribbon是Netflix发布的开源项目，主要功能是提供客户端的软件负载均衡算法，将Netflix的中间层服务连接在一起。 Ribbon客户端组件提供一系列完善的配置项如连接超时，重试等。 
+			简单的说，就是在配置文件中列出Load Balancer后面所有的机器，Ribbon会自动的帮助你基于某种规则（如简单轮询，随即连接等）去连接这些机器。 
+			我们也很容易使用Ribbon实现自定义的负载均衡算法。 简单地说，Ribbon是一个客户端负载均衡器。 -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-ribbon</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+	</dependencies>
+
+2、启动类使用@LoadBalanced注解，为RestTemplate开启负载均衡的能力。
+@SpringBootApplication
+@EnableDiscoveryClient
+public class SimpleStudentComsumerApplication {
+	/**
+	 * 实例化RestTemplate，通过@LoadBalanced注解开启均衡负载能力.
+	 * 
+	 * @return restTemplate
+	 */
+	@Bean
+	@LoadBalanced
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(SimpleStudentComsumerApplication.class, args);
+	}
+}
+3、实体类：
+public class Student {
+	public Student(Long id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+
+	public Student() {
+		super();
+	}
+
+	private Long id;
+	private String name;
+	private Short age;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Short getAge() {
+		return age;
+	}
+
+	public void setAge(Short age) {
+		this.age = age;
+	}
+}
+
+4、微服务类：
+@RestController
+public class StudentComsumerController {
+	@Autowired
+	private RestTemplate restTemplate;
+	@Value("${student.studentServicePath}")
+	private String studentServicePath;
+	private final Logger logger = Logger.getLogger(getClass());
+
+	@GetMapping("/student/{id}")
+	public Student findById(@PathVariable Long id) {
+		logger.info("serivceURL: " + studentServicePath + id);
+		return this.restTemplate.getForObject(studentServicePath + id, Student.class);
+	}
+}
+
+5、配置文件：
+spring:
+  application:
+    name: microservice-comsumer-student
+server:
+  port: 9050
+student: 
+  studentServicePath: http://microservice-provider-student/student/
+
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+
+#################################################
+
+Ribbon是Netflix发布的开源项目，主要功能是提供客户端的软件负载均衡算法，将Netflix的中间层服务连接在一起。
+Ribbon客户端组件提供一系列完善的配置项如连接超时，重试等。
+简单的说，就是在配置文件中列出Load Balancer后面所有的机器，Ribbon会自动的帮助你基于某种规则（如简单轮询，随即连接等）去连接这些机器。
+我们也很容易使用Ribbon实现自定义的负载均衡算法。
+简单地说，Ribbon是一个客户端负载均衡器。
+
+#################################################
+
+使用自定义的变量：
+1、配置文件
+student: 
+  studentServicePath: http://microservice-provider-student/student/
+2、定义变量
+	@Value("${student.studentServicePath}")
+	private String studentServicePath;
+	
+#################################################
