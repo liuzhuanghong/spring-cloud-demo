@@ -1,0 +1,14 @@
+
+
+
+
+
+报错：
+	Error creating bean with name 'hystrixCommandAspect' defined in class path resource [org/springframework/cloud/netflix/hystrix/HystrixCircuitBreakerConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.netflix.hystrix.contrib.javanica.aop.aspectj.HystrixCommandAspect]: Factory method 'hystrixCommandAspect' threw exception; nested exception is java.lang.NoClassDefFoundError: org/aspectj/lang/JoinPoint
+解决：	
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.8.6</version>
+		</dependency>
+
